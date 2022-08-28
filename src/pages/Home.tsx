@@ -3,17 +3,24 @@ import { View, Text, StyleSheet, TextInput, Platform, FlatList } from 'react-nat
 import { Button } from '../components/Button';
 import { TaskCard } from '../components/TaksCard';
 
+
+interface task {
+  id: number;
+  description: string;
+}
+
 export function Home() {
   const [newTask, setNewTask] = useState('');
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState<task[]>([]);
   const [greeting, setGreeting] = useState('');
 
   function handleAddTask() {
-    setTasks(oldState => [...oldState, newTask]);
+    const task = {
+      id: new Date().getTime(),
+      description: newTask,
+    };
+    setTasks([...tasks, task]);
   }
-
-  // Usa dois parametros, primeiro uma função, segundo dependencias dentro de um vetor.
-  // caso o vetor esteja em branco na segunda dependencia, ele vai carregar somente uma vez no momento da montagem.
 
   useEffect(() => {
     const currentHour = new Date().getHours();
@@ -52,8 +59,8 @@ export function Home() {
 
       <FlatList
         data={tasks}
-        keyExtractor={(item, index) => index}
-        renderItem={({ item }) => <TaskCard task={item} />}
+        keyExtractor={(item) => item.description}
+        renderItem={({ item }) => <TaskCard task={item.description} />}
       />
 
     </View>
@@ -67,8 +74,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#121015',
     paddingVertical: 70,
     paddingHorizontal: 30
-    // justifyContent: 'center',
-    // alignItems: 'center'
   },
   title: {
     color: '#fff',
